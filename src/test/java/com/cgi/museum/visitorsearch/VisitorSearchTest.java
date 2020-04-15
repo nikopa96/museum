@@ -21,19 +21,11 @@ class VisitorSearchTest {
 
     private FileReader fileReader;
     private VisitorSearch visitorSearch;
-    private List<Visit> visits;
 
     @BeforeEach
     void setUp() {
         this.fileReader = mock(FileReader.class);
         this.visitorSearch = new VisitorSearch(fileReader);
-
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        this.visits = new ArrayList<>();
-        this.visits.add(new Visit(LocalTime.parse("09:40", timeFormatter), LocalTime.parse("10:10", timeFormatter)));
-        this.visits.add(new Visit(LocalTime.parse("10:00", timeFormatter), LocalTime.parse("10:30", timeFormatter)));
-        this.visits.add(new Visit(LocalTime.parse("10:10", timeFormatter), LocalTime.parse("10:40", timeFormatter)));
-        this.visits.add(new Visit(LocalTime.parse("10:20", timeFormatter), LocalTime.parse("10:50", timeFormatter)));
     }
 
     @Test
@@ -41,12 +33,25 @@ class VisitorSearchTest {
         List<String> visitLines = Arrays.asList("09:40,10:10", "10:00,10:30", "10:10,10:40", "10:20,10:50");
         when(fileReader.getLines()).thenReturn(visitLines);
 
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        List<Visit> visits = new ArrayList<>();
+        visits.add(new Visit(LocalTime.parse("09:40", timeFormatter), LocalTime.parse("10:10", timeFormatter)));
+        visits.add(new Visit(LocalTime.parse("10:00", timeFormatter), LocalTime.parse("10:30", timeFormatter)));
+        visits.add(new Visit(LocalTime.parse("10:10", timeFormatter), LocalTime.parse("10:40", timeFormatter)));
+        visits.add(new Visit(LocalTime.parse("10:20", timeFormatter), LocalTime.parse("10:50", timeFormatter)));
+
         assertEquals(visits, visitorSearch.getVisitsFromFileLines());
     }
 
     @Test
     void getTimePointsTest() {
-        assertEquals(7, visitorSearch.getTimePoints(visits).size());
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        List<Visit> visits = new ArrayList<>();
+        visits.add(new Visit(LocalTime.parse("09:40", timeFormatter), LocalTime.parse("10:10", timeFormatter)));
+        visits.add(new Visit(LocalTime.parse("10:00", timeFormatter), LocalTime.parse("10:30", timeFormatter)));
+        visits.add(new Visit(LocalTime.parse("10:10", timeFormatter), LocalTime.parse("10:30", timeFormatter)));
+
+        assertEquals(4, visitorSearch.getTimePoints(visits).size());
     }
 
     @Test
