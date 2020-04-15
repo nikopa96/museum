@@ -7,10 +7,7 @@ import com.cgi.museum.filereader.FileReader;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class VisitorSearch {
@@ -21,7 +18,7 @@ public class VisitorSearch {
         this.fileReader = fileReader;
     }
 
-    List<Visit> getVisitsFromFileLines() throws IOException {
+    private List<Visit> getVisitsFromFileLines() throws IOException {
         List<String> visitLines = fileReader.getLines();
 
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -40,7 +37,7 @@ public class VisitorSearch {
         return visits;
     }
 
-    List<TimePoint> getTimePoints(List<Visit> visits) {
+    private List<TimePoint> getTimePoints(List<Visit> visits) {
         List<LocalTime> times = new ArrayList<>();
 
         for (Visit visit : visits) {
@@ -56,7 +53,7 @@ public class VisitorSearch {
         return timePoints;
     }
 
-    List<TimePoint> getTimePointsWithMaxNumberOfVisitors() throws IOException {
+    private List<TimePoint> countNumberOfVisitorsForEachTimePoint() throws IOException {
         List<Visit> visits = getVisitsFromFileLines();
         List<TimePoint> timePoints = getTimePoints(visits);
 
@@ -69,13 +66,32 @@ public class VisitorSearch {
             }
         }
 
-        TimePoint timePointWithMaxNumberOfVisitors = Collections.max(timePoints,
-                Comparator.comparing(TimePoint::getNumberOfVisitors));
+        return timePoints;
+    }
 
-        return timePoints.stream()
-                .filter(timePoint -> timePoint.getNumberOfVisitors() == timePointWithMaxNumberOfVisitors.getNumberOfVisitors())
+    private List<TimePoint> getTimePointsWithMaxNumberOfVisitors() throws IOException {
+        List<TimePoint> timePoints = countNumberOfVisitorsForEachTimePoint();
+
+        List<TimePoint> timePointsSortedByAscending = timePoints.stream()
                 .sorted(Comparator.comparing(TimePoint::getTime))
                 .collect(Collectors.toList());
+
+        TimePoint timePointWithMaxNumberOfVisitors = Collections.max(timePointsSortedByAscending,
+                Comparator.comparing(TimePoint::getNumberOfVisitors));
+
+        List<TimePoint> timePointsWithMaxNumberOfVisitors = new ArrayList<>();
+
+        int indexOfTimePointWithMaxVisitors = timePointsSortedByAscending.indexOf(timePointWithMaxNumberOfVisitors);
+        ListIterator<TimePoint> iterator = timePointsSortedByAscending.listIterator(indexOfTimePointWithMaxVisitors);
+        while (iterator.hasNext()) {
+            TimePoint currentTimePoint = iterator.next();
+            if (currentTimePoint.getNumberOfVisitors() < timePointWithMaxNumberOfVisitors.getNumberOfVisitors()) {
+                break;
+            }
+            timePointsWithMaxNumberOfVisitors.add(currentTimePoint);
+        }
+
+        return timePointsWithMaxNumberOfVisitors;
     }
 
     public String getTimeIntervalWithMaxNumberOfVisitors() throws IOException {

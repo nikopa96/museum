@@ -27,7 +27,8 @@ Answer: 10:10-10:30;3
 * **FileReader:** File reader.
   - **getLines():** reads a file and returns all lines
 * **VisitorSearch:** The class describes methods that search the number of visits at a specific time and the most visited time interval.
-  - **getVisitsFromFileLines():** converts lines from file to Visit class
+  - **getVisitsFromFileLines():** converts lines from file to Visit objects
   - **getTimePoints():** converts the start and end of a visit to TimePoints for a graph
+  - **countNumberOfVisitorsForEachTimePoint():** counts the number of visitors at each time point
   - **getTimePointsWithMaxNumberOfVisitors():** returns a list of points with the maximum number of visits. Time points are sorted in ascending order
   - **getTimeIntervalWithMaxNumberOfVisitors():** converts a list of time points to a string. Selects the first and last point
