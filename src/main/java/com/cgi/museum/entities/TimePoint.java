@@ -1,7 +1,6 @@
 package com.cgi.museum.entities;
 
 import java.time.LocalTime;
-import java.util.Objects;
 
 public class TimePoint {
 
@@ -27,27 +26,5 @@ public class TimePoint {
 
     public void incrementNumberOfVisitors() {
         this.numberOfVisitors++;
-    }
-
-    @Override
-    public String toString() {
-        return "TimePoints{" +
-                "time=" + time +
-                ", numberOfVisitors=" + numberOfVisitors +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TimePoint timePoint = (TimePoint) o;
-        return numberOfVisitors == timePoint.numberOfVisitors &&
-                time.equals(timePoint.time);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(time, numberOfVisitors);
     }
 }
